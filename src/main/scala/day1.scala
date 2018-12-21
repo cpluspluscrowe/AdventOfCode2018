@@ -1,4 +1,62 @@
-import scala.collection.immutable.HashSet
+import scala.collection.immutable.{HashSet, HashMap}
+
+case class LetterCounts(twoCount: Int, threeCount: Int)
+object dayTwo {
+  def main(args: Array[String]): Unit = {
+    val input = """abcdef
+bababc
+abbcde
+abcccd
+aabcdd
+abcdee
+ababab"""
+    val lineIterator: Iterator[String] = input.lines
+    println(getLetterFrequenciesForEachLine(lineIterator, HashMap()))
+  }
+  def getLetterFrequenciesForEachLine(
+      inputLineIterator: Iterator[String],
+      frequencies: HashMap[Char, Int]): LetterCounts = {
+    // base case, when we have all line frequencies, calculate letter counts
+    if (!inputLineIterator.hasNext) {
+      return getLetterCounts(frequencies)
+    }
+
+    return getLetterFrequenciesForEachLine(
+      inputLineIterator,
+      getLetterFrequencies(inputLineIterator.next(), 0, frequencies))
+  }
+
+  def getLetterCounts(letterFrequencies: HashMap[Char, Int]): LetterCounts = {
+    val lettersOccurringTwice = letterFrequencies.filter {
+      case (k, v) => v == 2
+    }
+    val lettersOccurringThreeTimes = letterFrequencies.filter {
+      case (k, v) => v == 3
+    }
+    return LetterCounts(twoCount = lettersOccurringTwice.size,
+                        threeCount = lettersOccurringThreeTimes.size)
+  }
+  def getLetterFrequencies(
+      letters: String,
+      lettersIndex: Int,
+      frequencies: HashMap[Char, Int]): HashMap[Char, Int] = {
+    // base case
+    if (lettersIndex == letters.length) {
+      return frequencies
+    }
+    val letter = letters(lettersIndex)
+    if (frequencies.contains(letter)) {
+      return getLetterFrequencies(
+        letters,
+        lettersIndex + 1,
+        frequencies + (letter -> (frequencies(letter) + 1)))
+    } else {
+      return getLetterFrequencies(letters,
+                                  lettersIndex + 1,
+                                  frequencies + (letter -> 1))
+    }
+  }
+}
 
 object dayOne {
   def getFrequency(input: String): Int = {
@@ -28,7 +86,7 @@ object dayOne {
     return -1
   }
 
-  def main(args: Array[String]): Unit = {
+  def mainDay1(args: Array[String]): Unit = {
     val input = """-5
 -2
 +1
