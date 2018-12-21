@@ -1,8 +1,34 @@
 import scala.collection.immutable.HashSet
 
 object dayOne {
+  def getFrequency(input: String): Int = {
+    var recordedFrequencies: HashSet[Int] = HashSet(0)
+    var sum: Int = 0
+    // some long loop that is sufficiently large to solve the problem
+    for (i <- 1 to 100000) {
+      for (line <- input.lines) {
+        val operations = line(0)
+        var offset: Int = line.replace("+", "").replace("-", "").toInt
+        operations match {
+          case '+' => {
+            sum += offset
+          }
+          case '-' => {
+            sum -= offset
+          }
+          case _ => throw new Exception("Default case should not be reached")
+        }
+        if (recordedFrequencies.contains(sum)) {
+          return sum
+        } else {
+          recordedFrequencies = recordedFrequencies + sum
+        }
+      }
+    }
+    return -1
+  }
+
   def main(args: Array[String]): Unit = {
-    println("day one!")
     val input = """-5
 -2
 +1
@@ -961,31 +987,5 @@ object dayOne {
 -6
 +125503"""
     println(getFrequency(input))
-  }
-
-  def getFrequency(input: String): Int = {
-    var recordedFrequencies: HashSet[Int] = HashSet(0)
-    var sum: Int = 0
-    for (i <- 1 to 100000) {
-      for (line <- input.lines) {
-        val operations = line(0)
-        var offset: Int = line.replace("+", "").replace("-", "").toInt
-        operations match {
-          case '+' => {
-            sum += offset
-          }
-          case '-' => {
-            sum -= offset
-          }
-          case _ => throw new Exception("Default case should not be reached")
-        }
-        if (recordedFrequencies.contains(sum)) {
-          return sum
-        } else {
-          recordedFrequencies = recordedFrequencies + sum
-        }
-      }
-    }
-    return -1
   }
 }
