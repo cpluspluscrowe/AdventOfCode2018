@@ -2,28 +2,20 @@ import scala.collection.immutable.{HashSet, HashMap}
 
 case class LetterCounts(twoCount: Int, threeCount: Int)
 object dayTwo {
-  def main(args: Array[String]): Unit = {
-    val input = """abcdef
-bababc
-abbcde
-abcccd
-aabcdd
-abcdee
-ababab"""
-    val lineIterator: Iterator[String] = input.lines
-    println(getLetterFrequenciesForEachLine(lineIterator, HashMap()))
-  }
   def getLetterFrequenciesForEachLine(
       inputLineIterator: Iterator[String],
-      frequencies: HashMap[Char, Int]): LetterCounts = {
+      letterCounts: List[LetterCounts]): List[LetterCounts] = {
     // base case, when we have all line frequencies, calculate letter counts
     if (!inputLineIterator.hasNext) {
-      return getLetterCounts(frequencies)
+      return letterCounts
     }
 
     return getLetterFrequenciesForEachLine(
       inputLineIterator,
-      getLetterFrequencies(inputLineIterator.next(), 0, frequencies))
+      List(
+        getLetterCounts(getLetterFrequencies(inputLineIterator.next(),
+                                             0,
+                                             HashMap())))) ::: letterCounts
   }
 
   def getLetterCounts(letterFrequencies: HashMap[Char, Int]): LetterCounts = {
@@ -33,8 +25,9 @@ ababab"""
     val lettersOccurringThreeTimes = letterFrequencies.filter {
       case (k, v) => v == 3
     }
-    return LetterCounts(twoCount = lettersOccurringTwice.size,
-                        threeCount = lettersOccurringThreeTimes.size)
+    return LetterCounts(twoCount = Math.min(lettersOccurringTwice.size, 1),
+                        threeCount =
+                          Math.min(lettersOccurringThreeTimes.size, 1))
   }
   def getLetterFrequencies(
       letters: String,
@@ -55,6 +48,267 @@ ababab"""
                                   lettersIndex + 1,
                                   frequencies + (letter -> 1))
     }
+  }
+  def main(args: Array[String]): Unit = {
+    val input = """naosmkcwtdbfivxuphzweraljq
+nvssmicltdbfiyxuphzgeraljq
+nvosmkcwwdbfiyxuphzeeraljx
+nvosmkcqtdbfiyxupkzgeraljw
+qvosmkcwtdbhiyxuphzgeraljh
+nvocqkcktdbfiyxuphzgeraljq
+nvosmhcwtdbfiyxmphzgekaljq
+nvosmkcwtdbfuyxwpszgeraljq
+nvosmocwtcbfiyxupfzgeraljq
+nvosmkcwtdbfiyxubczgeraljv
+nvosmkswtdbfiyxuphzgeruejq
+nlosmkcwtqbfiyxuphzgyraljq
+nvosmkcwtdbficxuphzgwraljk
+nvosmkkwtdbfiyxxphzgeralcq
+vvosmkcetdbfiyxumhzgeraljq
+evosmkcdtdbfiyxuphkgeraljq
+nvosmkvwtdbkiyxuphzgeraejq
+nvoszkcwtdbfimxuphzgeraljb
+nvozmkcwtdbfiyxuphzgrrcljq
+nvosvacwtdbfiyxuphzgeralzq
+nvosmkcwgdofiyxuthzgeraljq
+nvosmkcwasbfiyxuphzgeradjq
+nvosmkcatobfiyxtphzgeraljq
+nvosmkewtdsfiyxuphzgekaljq
+tvormkcwtdbfiyxuphzieraljq
+nvosgkcwtdbfiyxuuhzgeraqjq
+nvosmkcwtdbqiwxuphzgeralvq
+nvosmkcwtybfiydcphzgeraljq
+nvosnkcwtdbfiyxuphzulraljq
+nvosmkcwtdbbiyuupnzgeraljq
+nvosmwcwtdbfiyxuphzneraojq
+nvohlkcwtdbftyxuphzgeraljq
+nvasmkcwbdbfiyiuphzgeraljq
+nvosmkujtdbfiyxuphzgeraljz
+nvosmgcstdbfiyxuphzgeraljd
+nvoswkcwtsbziyxuphzgeraljq
+nvosmmcwtdbfiyxupbzzeraljq
+nvosmkcwtdbfifxulhzgeralji
+nvolmkcwtdbmiyxuphzgeraljv
+lvnsmkcwtdbfiyxuphzzeraljq
+nvqsmkcwtdbfiyxuphageralfq
+nvosmkcwtdmfiyluphzgeralzq
+nvommvcwtdbfiyxupjzgeraljq
+naosmkcwtdbfsyxuphzgsraljq
+avosmkcwtdbfiyxuphzgebafjq
+ndozmkcwtdbfiyxuhhzgeraljq
+nvosmkcwtubfiyxuphooeraljq
+nvosmkcwtdbliyxuphzgmraljx
+nvosmkcuddbfimxuphzgeraljq
+wvosmkzwrdbfiyxuphzgeraljq
+nvosmkcqtdbfiyxupjzgeraijq
+nvosbkcwtdbfiyduphzgeruljq
+yzosmkcntdbfiyxuphzgeraljq
+nvolmkcwtdbfiyxuphugeralfq
+nvrsmkcwtdbjiyxuphzgejaljq
+nvgsmkcwtdbfiyxuphoglraljq
+nvosmkcwtdbfioxuphzgezalhq
+nvosjkcwtdbfipxuphzgekaljq
+nvosmkcwtabfiyxlpazgeraljq
+nvosmkfwtpnfiyxuphzgeraljq
+nvokmbcwtdbeiyxuphzgeraljq
+nvosmkcwtdbfiyxupmzgmlaljq
+nvosmkcwtdhfiykurhzgeraljq
+nvosmkcwwdbfiyxumhzgiraljq
+cvosmscwtdbfikxuphzgeraljq
+nvosmkcwtdnzirxuphzgeraljq
+nvosmscwtdbfiyxuuhbgeraljq
+nvosmkcwtdbfidxpphzgeraajq
+nvosmkcwtdbfiyxuqhzgurcljq
+nvosmkcwtekfiyxrphzgeraljq
+ntosmkcwtpqfiyxuphzgeraljq
+nvosmkcdtdbfhyxsphzgrraljq
+nvolmkkwtdbfiyxuphzgeralgq
+nvosmrcwtdbfiyxuphzgefkljq
+nvoxmkcwtdbfiysuphzeeraljq
+nvjsmkswtdbfiyxuphzqeraljq
+nvosmkcetdbfiyfuphdgeraljq
+nvosmkkwtpbfsyxuphzgeraljq
+nvosdgcwtdbfiyxupyzgeraljq
+nvosmkcwudbfiyzvphzgeraljq
+nvosmkcwtlbfiyxupkzgerzljq
+nvosmkcwtdbfiywuphyzeraljq
+nvocmkcwtdufiyxukhzgeraljq
+nvosmkcwtdqfiyxuphzgevaxjq
+nvosvkcwtdbgiyxuphzgeralzq
+nqosmkcwtdbfiyxuphzeeraljr
+nvosmkcetdbfiyxuphzgeroljo
+nvosmkcwtdvfiyxuphzceraliq
+nvosmkcwtnxfiyxuphzgyraljq
+nvosmkfwtdefiyxupxzgeraljq
+nvosmacwtdbfiyxuphzseragjq
+nvpsmkcwtdbfzyxuvhzgeraljq
+nvormkcwtdbfiyxuphzairaljq
+rvysmkcwtdbfmyxuphzgeraljq
+nvosmscwzdbfiyxuphzgerbljq
+nvosmkcwtdufmyxuphzqeraljq
+nvosmkcwtxbfiyxxphzgeralxq
+nvosmkcwtdbsiyxupsfgeraljq
+nvosmccwtdbfiqxuthzgeraljq
+nvosmtcwtqbuiyxuphzgeraljq
+nvosmkcwtdbfiysurbzgeraljq
+nvowmkcwtdbfiyxuywzgeraljq
+xvosmkcktdbfiyxuhhzgeraljq
+nvosmkgwsdbfiyxmphzgeraljq
+jvofmkcwtdbfiyxupyzgeraljq
+nvozakcwtdbfiexuphzgeraljq
+nvosmkcptdbfiyxuphzgepaljn
+nvosmkcwtdbpiyxuphzgeraxjw
+nvoszkcwtdbfiyjuphzeeraljq
+nvosmkcwtdbfiyxuppzoeraejq
+nvosmkiytdbfiyhuphzgeraljq
+nvosmkcwtdvfiywupyzgeraljq
+nvosmecwtdofiyxuphzgeralja
+nvosmkqwtdbfixxuphzgeraojq
+nvosmkwwtdbfiyxfpdzgeraljq
+nvosmkgwtdbfiyzupwzgeraljq
+nmosmucwtdvfiyxuphzgeraljq
+nvosmdcwtdbmiyxuphzveraljq
+wvosmkcwtpbfiyxuphzgetaljq
+nvosmmcwtdlfbyxuphzgeraljq
+nvosmkcwtabmiexuphzgeraljq
+nvosqpcwtdbfiyxuphzgqraljq
+nvosmecwjdbfiyxuphzgeraljk
+nyohmkcwtdbfiyxuphzgzraljq
+nlosmkcwtkbfiyxuphzgeraejq
+nvosmkcwrdbliyxuphzgerpljq
+nvusmkzwtdbfxyxuphzgeraljq
+nvosmkcwtdbfiyxuhizgerazjq
+nvosmkhptdbfbyxuphzgeraljq
+nvosmfcwtdbgiyxupdzgeraljq
+nvosmkmwtdbfiyxuphzgevalpq
+nvosmkcwtdwfiyxuphzherjljq
+nvosmkcwjwbfiyxuphzgeualjq
+nvosmkcwxdbflymuphzgeraljq
+nvosmkcwpdbriyxuphzoeraljq
+nvoshkcwcdbfiyxuphzgeravjq
+nvosmkcetcbfiyxgphzgeraljq
+nvosmkcwtdyfiyxuphzgerwqjq
+nuosmkcwedbfiyxurhzgeraljq
+nvosmkcwtdbfiixuphzctraljq
+nvoszkcwtdbfwyxuphzgerpljq
+nvormkcwtdbfiyxuphzgeralzn
+nvosmkyttdbfiywuphzgeraljq
+nvosmkcwtdbhiyxupazgeralhq
+nvotmkcwtdbfiyxuphzgevalbq
+nvosmkcwedbfiyxuphzguraljr
+nvssmkcwtdbfiyxushzgeralbq
+nvosmkcwtdeziyxuphzgeralhq
+nvogmkcwtdbfiyxuphzgerrxjq
+ncormkcwtdbfiyxuphzgeraloq
+nvosmkcwbdbfiyeuphzgerqljq
+nvosxkcwtdbfsyxupfzgeraljq
+nvohmkcwtdbfiyxuphzseraajq
+nvoscdcwtdbfiyxuphzgeralqq
+neosmkcwtdbfiyxuchzgeralgq
+njosmvcwpdbfiyxuphzgeraljq
+nvosmkcwtwbfiyxuphzgehamjq
+nvosmkcwtdbfiyxushzgejaljv
+nvosmkcwodbfiyxuphzgeryqjq
+nvoymqcwtdbfiyxuphzgeralbq
+nvosmkcwtdjfiyxuphzgesaljb
+nvjsmdcwedbfiyxuphzgeraljq
+nvosmkcwydbfiyxuihzmeraljq
+nvrsmkcwtdifiyxuphzgqraljq
+nposmkcwtdbfiyxiohzgeraljq
+dvosmkcwtdbfiyxuphzrvraljq
+pvosmkcwudbfsyxuphzgeraljq
+noosmkcwtdbfiyxuphtgexaljq
+nvosmkcwtdbfiaxuphyferaljq
+nvhsmlcwtdbfiyxuphzgeualjq
+nvosekcwtdbbiyxuphzgerabjq
+nvosvkcitdbfiyxuphzgerarjq
+nvotmkkwtdbfiyxuphzgeraljj
+nvosmecwtdbfiyxuphzgyralwq
+hvosmkcwtdbfiyxuphzysraljq
+nvosmkcvtdbfiyxlphzgeraljb
+nvosmkcwttbfiyxuphngtraljq
+nvoslkcwtdbfiyxuphzqeraljr
+nxosmkcwtdbfibxuphzgrraljq
+nvokmkhwtdbfiyxuphzgwraljq
+nvosmkfwtdbfiyxuphzgdraljo
+nvcsmkcwtdbfibxuphzgeraljl
+nvosmkcwtdcfiaxuphzeeraljq
+wvosmkcwtdbyiyxjphzgeraljq
+nyosmbcwtjbfiyxuphzgeraljq
+nvosmkcwtdbiiyxuahzieraljq
+nqosmkcwtdbfiyxuyhzgerapjq
+nvosmkcwtdbfiyxuwhzzetaljq
+nvosmkcwfgbfiyxuphzgerrljq
+nvosmbcwtdbfipxuphzderaljq
+nvosmkcwtdgfiyxupdzgerjljq
+noosmkcwtdcfiyxuphlgeraljq
+nvonmkcutdbfiyxuphzieraljq
+nvocmkcwtdbfiyyuphageraljq
+nvosmkcwtdbfoyxuphzneraqjq
+nvoskkcwtdbtiyxuphzgevaljq
+ocosmkswtdbfiyxuphzgeraljq
+nvosmkcqtdbfiyxfvhzgeraljq
+noosmkcwtdbfiyquphzberaljq
+nvosmkcwttbfijxuchzgeraljq
+nvogmkcwtdbfiyxupazgeralaq
+nvqsmkcwtdbfikxuphzgeraliq
+nvosmkuwtdbfiyxuphzjwraljq
+nyosmhcwtdbfiyxuphzgereljq
+nvosmncwtdbfietuphzgeraljq
+gvpsmkcwtdbfiyxuyhzgeraljq
+nvozmkewtlbfiyxuphzgeraljq
+nvostkcltpbfiyxuphzgeraljq
+nvosmkcwtdbdiyxuphzgehaljz
+nvosmkcwtjbziyxuphzgexaljq
+nvosmkcwtdbfiyptphzggraljq
+nvosmkcwtdbliyxupjzgebaljq
+nvosmkawtdbfiyxupxzgtraljq
+vvosmkcwtdbfiyxfphzperaljq
+nvosmkawtdbfiyxutczgeraljq
+nvosmkcbtdbuiyxrphzgeraljq
+nvbsmkcwtdbfiyxdphzgerasjq
+nvosnkcwqdsfiyxuphzgeraljq
+nvosmkcwtdbfiyxwphzgzzaljq
+nvosmkcwtdbffyquphzgeralcq
+nvosmkcwtzbfiyxdphzgzraljq
+nvysmkcwtdbfiycvphzgeraljq
+nvowmkcwtdbfiycuyhzgeraljq
+nvosbkcwtdbfiyiuphzgeraqjq
+nvosmecwtdbfiyxupqzmeraljq
+nvosmkcdtdbfhyxsphzgeraljq
+nmosmkcwtdbziyxuphzgercljq
+nvosmkcwtdbfiyxupfmgersljq
+nvosmkcvtdbpyyxuphzgeraljq
+nvosmkcwtkbfiyaupxzgeraljq
+nvosmkcwtzbiiyxuphzgerazjq
+nvoxmkcwtdbfiyxuphztegaljq
+nvonmkcwtdafiyxuphzgerkljq
+rvommkcwtdbfiyxzphzgeraljq
+nvosmkcwthbfiysuphzgeraxjq
+nvosmkcwtdbfnyxuphzgerccjq
+nrosmzcwtdbfiyxuphkgeraljq
+nvolmkcdtdbfiyxuphtgeraljq
+nvosfkcwtdbfiyeuphcgeraljq
+nvowmkcwtdbfhyxuphzgerafjq
+gvosmkcwtdbfiyxupbpgeraljq
+nvosmkcwtdbkiyxuphegebaljq
+nvommufwtdbfiyxuphzgeraljq
+uvksmkcwtdbfiysuphzgeraljq
+nvosmkcwevbfiyxuphtgeraljq
+nvosmkcmtdbfiycuphzgeraxjq
+nvcsxkcwtdbfiyxuphzgeraljn
+nvosmkcwtdbtiymuphzgeraltq
+nvosmfcwtdlfjyxuphzgeraljq
+svosmkcitdbfiyxuphzgsraljq"""
+    val lineIterator: Iterator[String] = input.lines
+    val letters = getLetterFrequenciesForEachLine(lineIterator, List())
+    var twos = 0
+    var threes = 0
+    for (letterCounts <- letters) {
+      twos += letterCounts.twoCount
+      threes += letterCounts.threeCount
+    }
+    println(twos * threes)
   }
 }
 
